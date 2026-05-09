@@ -1,22 +1,70 @@
+async function generateCode() {
+
+  const number =
+  document.getElementById("number").value
+
+  if(!number) {
+    alert("Enter WhatsApp Number")
+    return
+  }
+
+  document.getElementById("code").innerText =
+  "Generating..."
+
+  try {
+
+    const res = await fetch("/pair", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        number
+      })
+    })
+
+    const data = await res.json()
+
+    if(!data.status) {
+
+      alert(data.error || data.msg)
+    }
+
+  } catch(e) {
+
+    alert("Server Error")
+    console.log(e)
+  }
+}
+
 async function loadCode() {
 
-  const res = await fetch("/code")
+  try {
 
-  const data = await res.json()
+    const res = await fetch("/code")
 
-  document.getElementById("code").innerText = data.code
+    const data = await res.json()
 
-  const status = document.getElementById("status")
+    document.getElementById("code").innerText =
+    data.code
 
-  if(data.connected) {
+    const status =
+    document.getElementById("status")
 
-    status.innerText = "Connected"
-    status.className = "status online"
+    if(data.connected) {
 
-  } else {
+      status.innerText = "Connected"
+      status.className = "status online"
 
-    status.innerText = "Waiting For Login"
-    status.className = "status offline"
+    } else {
+
+      status.innerText = "Waiting For Login"
+      status.className = "status offline"
+    }
+
+  } catch(e) {
+
+    console.log(e)
   }
 }
 
